@@ -1,5 +1,24 @@
-import math
-pedido_radio = input("Ingresá el radio r de tu esfera, por favor: ")
-calculo_volumen = 4/3 * math.pi * float(pedido_radio) ** float(3)
-print("El volumen es:", calculo_volumen)
+class Shape:
+    def area(self):
+        pass
 
+class Rectangle(Shape):
+    def __init__(self, length, width):
+        self.length = length
+        self.width = width
+
+    def area(self):
+        return self.length * self.width
+
+class Circle(Shape):
+    def __init__(self, radius):
+        self.radius = radius
+
+    def area(self):
+        return 3.14 * self.radius ** 2
+        
+rectangle = Rectangle(length=5, width=3)
+circle = Circle(radius=4)
+
+print("Rectangle Area:", rectangle.area())
+print("Circle Area:", circle.area())
