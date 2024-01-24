@@ -1,5 +1,5 @@
 
-
+#%%
 class GeringosoConverter:
     def __init__(self):
         self.dic = {}
@@ -30,3 +30,5 @@ result = geringoso_instance.process_list(['pera', 'mandarina', 'naranja'])
 
 # Display the result
 print(result)
+
+# %%
