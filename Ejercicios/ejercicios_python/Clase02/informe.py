@@ -1,34 +1,6 @@
 import pprint
 """"2.15: Lista de tuplas"""
-"""def leer_camion(f):
-    import csv
-    
-    total = 0.0
-    camion = []
-    try:
-        
-        a = open(f)
-        rows = csv.reader(a)
-        headers = next(rows)       
-        total = 0
-        for line in rows:
-            try:
-                camion.append((line[0], int(line[1]), float(line[2])))
-              
-            except IndexError:
-                print('Una fila se encuentra vacía')                
-        return camion
-        f.close()
-        
-    except FileNotFoundError or TypeError: 
-          print(f'No corresponde a una direccion válida.') 
-        
-data = leer_camion('../Data/camion.csv')
-print(data) 
-total=0
-for s in data:
-    total += s[1]*s[2]
-print[total]"""
+#%%
 from pprint import pprint
 def leer_camion(nuevo_archivo):
     import csv
@@ -52,12 +24,7 @@ def leer_camion(nuevo_archivo):
           print(f'No corresponde a una direccion válida.') 
         
 data = leer_camion('../Data/camion.csv')
-print( )
-print(data)
-total = 0.0
-for s in data:
-    total += s['cajones']*s['precio']
-print(f'total:{total}')
+
 print( )
 print("Impresión bonita de un diccionario en Python")
 pprint(data)
@@ -78,3 +45,4 @@ precios= leer_precios('../Data/precios.csv')
 print(precios)
 
               
+# %%
