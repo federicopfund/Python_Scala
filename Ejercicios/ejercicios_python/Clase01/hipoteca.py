@@ -1,84 +1,94 @@
 # hipoteca.py
 # Archivo de ejemplo
 # Ejercicio de hipoteca
+#%%
+class Mortgage:
+    def __init__(self, principal, annual_interest_rate, monthly_payment, loan_term_years, adelanta=0, adelanta_start_month=0, adelanta_end_month=0):
+        self.principal = principal
+        self.annual_interest_rate = annual_interest_rate
+        self.monthly_payment = monthly_payment
+        self.loan_term_years = loan_term_years
+        self.adelanta = adelanta
+        self.adelanta_start_month = adelanta_start_month
+        self.adelanta_end_month = adelanta_end_month
+        self.total_paid = 0.0
+        self.current_month = 0
 
-""""David solicitó un crédito a 30 años para comprar una vivienda, 
-    con una tasa fija nominal anual del 5%.
-    Pidió $500000 al banco y acordó un pago mensual fijo de $2684"""
-    
-saldo = 500000.0
-tasa = 0.05
-pago_mensual = 2684.11
-total_pagado = 0.0
+    @classmethod
+    def calculate_monthly_interest(cls, annual_interest_rate):
+        return annual_interest_rate / 12
 
-while saldo > 0:
-    saldo = saldo * (1+tasa/12) - pago_mensual
-    total_pagado = total_pagado + pago_mensual
+    def monthly_payments_generator(self):
+        monthly_interest = Mortgage.calculate_monthly_interest(self.annual_interest_rate)
+        for _ in range(self.loan_term_years * 12):
+            self.current_month += 1
 
-print('Total pagado', round(total_pagado, 2))
+            if self.adelanta_start_month < self.current_month <= self.adelanta_end_month:
+                yield (self.monthly_payment + self.adelanta)
+            else:
+                yield self.monthly_payment
 
-""""Ejercicio 1.8: Adelantos
-    Supongamos que David adelanta pagos extra de $1000/mes,
-    durante los primeros 12 meses de la hipoteca."""
-"""
-adelanta=1000    
-saldo = 500000.0
-tasa = 0.05
-pago_mensual = 2684.11
-total_pagado = 0.0
-mes_actual=0
-while saldo > 0:
-    pago_mensual_ef = pago_mensual
-    mes_actual = mes_actual + 1
-    if mes_actual <=12:
-        pago_mensual_ef=pago_mensual+adelanta
-    saldo = saldo * (1+tasa/12) - pago_mensual_ef
-    total_pagado = total_pagado + pago_mensual_ef 
-    print("Meses:",mes_actual,"\ntotal Pagado:",round(total_pagado,2))      
-    #print(f'mes:{mes_actual}\nResto a pagar:{saldo}\nTotal pagado:{round(total_pagado, 2)}')"""
-    
-"""Ejercicio 1.9: Calculadora de adelantos"""
-"""¿Cuánto pagaría David si agrega $1000 por mes durante cuatro años, 
-    comenzando en el sexto año de la hipoteca (es decir, luego de 5 años)?"""
-    
-"""
-adelanta=1000    
-saldo = 500000.0
-tasa = 0.05
-pago_mensual = 2684.11
-total_pagado = 0.0
-mes_actual=0
-pago_extra_mes_comienzo=60
-pago_extra_mes_fin = 108
-while saldo > 0:
-    pago_mensual_ef = pago_mensual
-    mes_actual = mes_actual + 1
-    if pago_extra_mes_comienzo <mes_actual <=pago_extra_mes_fin:
-        pago_mensual_ef=pago_mensual+adelanta
-    saldo = saldo * (1+tasa/12) - pago_mensual_ef
-    total_pagado = total_pagado + pago_mensual_ef 
-    print(f'{mes_actual}:{round(total_pagado,2)}   {round(saldo,2)}')     
-print(f'Mes:{mes_actual}\nResto a pagar:{round(saldo,2)}\nTotal pagado:{round(total_pagado, 2)}')"""
+    def calculate_total_paid(self):
+        payments = self.monthly_payments_generator()
+        for payment in payments:
+            self.principal = self.principal * (1 + self.calculate_monthly_interest(self.annual_interest_rate)) - payment
+            self.total_paid += payment
+
+    def display_result(self):
+        print(f'Total paid: {round(self.total_paid, 2)}')
 
 
-"""Ejercicio 1.11: Bonus"""
-adelanta=1000    
-saldo = 500000.0
-tasa = 0.05
-pago_mensual = 2684.11
-total_pagado = 0.0
-mes_actual=0
-pago_extra_mes_comienzo=60
-pago_extra_mes_fin = 108
-while saldo > 0:
-    pago_mensual_ef = pago_mensual
-    mes_actual = mes_actual + 1
-    if pago_extra_mes_comienzo <mes_actual <=pago_extra_mes_fin:
-        pago_mensual_ef=pago_mensual+adelanta
-    if pago_mensual_ef>saldo:
-        pago_mensual_ef=saldo*(1 + tasa/12)
-        
-    saldo = saldo * (1 + tasa/12) - pago_mensual_ef
-    total_pagado = total_pagado + pago_mensual_ef 
-    print(f'{mes_actual}:{round(total_pagado,2)}   {round(saldo,2)}')     
-print(f'Mes:{mes_actual}\nResto a pagar:{round(saldo,2)}\nTotal pagado:{round(total_pagado, 2)}')
+# Ejemplo de uso
+mortgage = Mortgage(principal=500000.0, annual_interest_rate=0.05, monthly_payment=2684.11, loan_term_years=30, adelanta=1000, adelanta_start_month=6, adelanta_end_month=17)
+
+mortgage.calculate_total_paid()
+mortgage.display_result()
+
+ 
+ #   """"David solicitó un crédito a 30 años para comprar una vivienda, 
+ #   con una tasa fija nominal anual del 5%.
+ #  Pidió $500000 al banco y acordó un pago mensual fijo de $2684"""
+# Example of using the Mortgage class
+davids_mortgage = Mortgage(principal=500000.0,
+                            annual_interest_rate=0.05,
+                             monthly_payment=2684.11,
+                              loan_term_years=30,
+                               adelanta=0,
+                                adelanta_start_month=0,
+                                adelanta_end_month=0)
+davids_mortgage.calculate_total_paid()
+davids_mortgage.display_result()
+
+"""Ejercicio 1.8: Adelantos
+        Supongamos que David adelanta pagos extra de $1000/mes,
+        durante los primeros 12 meses de la hipoteca.
+    """
+# Example of using the Mortgage class
+davids_mortgage = Mortgage(principal=500000.0,  
+                             annual_interest_rate=0.05,
+                             monthly_payment=2684.11,
+                             loan_term_years=30 ,
+                             adelanta=1000,
+                             adelanta_start_month=12,
+                             adelanta_end_month=0)
+davids_mortgage.calculate_total_paid()
+davids_mortgage.display_result()
+
+        # """¿Cuánto pagaría David si agrega $1000 por mes durante cuatro años, 
+        #   comenzando en el sexto año de la hipoteca (es decir, luego de 5 años)?"""
+        # """Ejercicio 1.11: Bonus"""
+# Example of using the Mortgage class
+davids_mortgage = Mortgage(
+    principal=500000.0,
+    annual_interest_rate=0.05,
+    monthly_payment=2684.11,
+    loan_term_years=30,
+    adelanta=1000,
+    adelanta_start_month=60,
+    adelanta_end_month=108
+)
+
+davids_mortgage.calculate_total_paid()
+davids_mortgage.display_result()
+
+# %%
