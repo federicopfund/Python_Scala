@@ -13,9 +13,9 @@ def leer_parque(nuevo_archivo,parque):
     try:
         with open(nuevo_archivo,"rt",encoding = 'utf-8') as f:
             rows = csv.reader(f)
-            headers = next(row)  
+            headers = next(rows)  
             i=0
-            for i, line in enumerate(row,start=1):
+            for i, line in enumerate(rows,start=1):
                 try:#levantamos indexerror
                     registro = dict(zip(headers,line))
                     if registro['espacio_ve'] == parque:
