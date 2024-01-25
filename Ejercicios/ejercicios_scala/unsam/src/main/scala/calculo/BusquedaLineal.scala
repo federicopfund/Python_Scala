@@ -9,7 +9,7 @@ object BusquedaLinealOrdenada {
     * @param e     Elemento que se busca en la lista.
     * @return      La posición del elemento en la lista o -1 si no se encuentra.
     */
-    
+
   def busquedaLinealOrdenada(lista: List[Int], e: Int): Int = {
     // Asegúrate de que la lista esté ordenada antes de realizar la búsqueda
     val listaOrdenada = lista.sorted
@@ -39,7 +39,7 @@ object BusquedaLinealOrdenada {
   }
 
   // Ejemplo de uso
-  def main(args: Array[String]): Unit = {
+  def run(args: Array[String]): Unit = {
     val lista = List(5, 8, 12, 15, 22, 30, 34, 40)
     val elementoBuscado = 22
     val resultado = busquedaLinealOrdenada(lista, elementoBuscado)
