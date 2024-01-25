@@ -27,7 +27,7 @@ object BusquedaBinaria {
         val medio = izq + (der - izq) / 2
 
         if (verbose) {
-          println(s"[DEBUG] ${izq}%3d |${der}%3d |${medio}%3d")
+          println(s"[DEBUG] Izquierda: ${lista(izq)}, Derecha: ${lista(der)}, Medio: ${lista(medio)}, Elemento buscado: $x")
         }
 
         if (lista(medio) == x) {
