@@ -10,6 +10,7 @@ import varios.BouncingBall
 import contable.Camion
 import contable.Buscador
 import botanica.ArboladoParque
+import calculo.BusquedaBinaria
 
 object MainClass {
   def main(args: Array[String]): Unit = {
@@ -88,5 +89,9 @@ object MainClass {
     }
     println("------")
     }
+
+    // Ejemplos de uso busqueda binaria
+  val resultadoBusqueda = BusquedaBinaria.run(List(1, 2, 4, 6, 8, 6, 7, 5, 6), 5, verbose = true)
+
   }
 }
