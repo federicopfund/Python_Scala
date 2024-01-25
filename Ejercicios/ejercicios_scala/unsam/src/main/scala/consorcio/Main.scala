@@ -1,5 +1,7 @@
 package Consorcio
 
+import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.SparkSession
 import java.nio.file.{Path, Paths}
 import varios.GeringosoConverter
 import varios.TextManipulator
@@ -7,10 +9,11 @@ import contable.Mortgage
 import varios.BouncingBall
 import contable.Camion
 import contable.Buscador
-
+import botanica.ArboladoParque
 
 object MainClass {
   def main(args: Array[String]): Unit = {
+
     // Crear una instancia de GeringosoConverter
     val geringosoInstance = new GeringosoConverter()
  
@@ -60,5 +63,30 @@ object MainClass {
   val precio = Buscador.precio("Cebolla",filePath)
   println(s"El precio de la Cebolla es: $precio")
 
+  
+  //val arboleda = ArboladoParque.leerParque(Paths.get("./src/resources/arbolado-en-espacios-verdes.csv"))
+  //arboleda.foreach(println)
+      // Obtener el DataFrame del archivo
+  val arboladoDF : DataFrame = ArboladoParque.leerParque(Path.of("./src/resources/arbolado-en-espacios-verdes.csv"))
+
+    // Calcular la altura promedio de los Jacarandás
+  val alturaPromedio = ArboladoParque.alturaPromedioJacaranda(arboladoDF)
+  // Calcula el diametro y alto
+  val altosYDiametrosJacaranda = ArboladoParque.altosYDiametrosJacaranda(arboladoDF)
+  println(s"Altura promedio de los Jacarandás: $alturaPromedio")
+  println(s"Altura y diametro de los Jacarandás: $altosYDiametrosJacaranda")
+
+
+  val especies: List[String] = List("Eucalipto", "Palo borracho rosado", "Jacarandá")
+  val medidas: Map[String, List[(Double, Double)]] = ArboladoParque.medidasDeEspecies(especies, arboladoDF)
+
+  // Imprimir las medidas para cada especie
+  medidas.foreach { case (especie, listaMedidas) =>
+    println(s"Primeras 15 medidas para $especie:")
+    listaMedidas.take(15).foreach { case (altura, diametro) =>
+      println(s"Altura: $altura, Diámetro: $diametro")
+    }
+    println("------")
+    }
   }
 }
