@@ -23,4 +23,5 @@ lazy val root = (project in file(".")).
      
     ),
    
+    Global / excludeLintKeys += sparkVersion
   )
