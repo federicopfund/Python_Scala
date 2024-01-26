@@ -6,8 +6,7 @@ import java.nio.file.{Files, Paths}
 
 
 object figus {
-  
-  /**
+    /**
     * Función para crear un gráfico de línea.
     *
     * @param x Secuencia de valores para el eje x.
