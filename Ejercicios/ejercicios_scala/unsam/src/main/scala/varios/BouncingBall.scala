@@ -5,6 +5,10 @@ class BouncingBall(initialHeight: Double, bounces: Int) {
   var height: Double = initialHeight
   var currentBounce: Int = 0
 
+  /**
+    * Simula el rebote de la pelota.
+    * Imprime la altura después de cada rebote.
+    */
   def simulateBounces(): Unit = {
     while (currentBounce < bounces) {
       currentBounce += 1
