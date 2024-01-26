@@ -1,10 +1,27 @@
 package Operation
 
+import org.apache.spark.sql.{SparkSession, DataFrame}
+import org.apache.spark.sql.functions.col
 import scala.io.Source
 import java.nio.file.{Path, Paths}
 
 object CsvParserRecursive {
-     /**
+
+  def run(pathFile: Path, select: Option[List[String]], types: Option[List[String => Any]]): Unit = {
+    val spark = SparkSession.builder.appName("CsvParserApp").master("local").getOrCreate()
+
+    val source = Source.fromFile(pathFile.toFile)
+    val lines = source.getLines()
+
+    val result = parseCsvRec(lines, select, types)
+
+    source.close()
+
+    // Mostrar solo las primeras 15 filas
+    result.take(15).foreach(println)
+  }
+
+  /**
     * Parsea un archivo CSV de manera recursiva, con opciones para seleccionar columnas y especificar tipos de datos.
     *
     * @param lines        Iterator de líneas del archivo CSV.
@@ -14,15 +31,16 @@ object CsvParserRecursive {
     * @param silenceErrors Indica si se deben silenciar los errores de conversión de tipos.
     * @return             Lista de listas que representa los datos parseados del CSV.
     */
-
   def parseCsvRec(lines: Iterator[String], select: Option[List[String]] = None, types: Option[List[String => Any]] = None, hasHeaders: Boolean = true, silenceErrors: Boolean = false): List[List[Any]] = {
-     // Leer los encabezados (si los hay)
+    // Leer los encabezados (si los hay)
     val (headers, remainingLines) = if (hasHeaders && lines.hasNext) {
       val header :: restOfLines = lines.toList
       val headerList = header.split(",").toList
       println(s"Headers found: $headerList")
       (headerList, restOfLines.iterator)
     } else (List(), lines)
+    // Imprimir encabezados seleccionados
+    select.foreach(selectedColumns => println(s"Selected headers: ${selectedColumns.mkString(", ")}"))
     /**
       * Función auxiliar para parsear una única fila del CSV.
       *
@@ -54,9 +72,10 @@ object CsvParserRecursive {
           }
         case None => selectedRow
       }
-    
-  // Lógica para procesar las líneas
-    remainingLines.flatMap { line =>
+    }
+
+    // Lógica para procesar las líneas
+    val parsedData = remainingLines.flatMap { line =>
       val row = line.split(",").toList
       if (row.nonEmpty) Some(parseRow(row, headers))
       else {
@@ -64,48 +83,8 @@ object CsvParserRecursive {
         None
       }
     }.toList
-  }
 
-
-    /**
-      * Función recursiva para procesar las líneas del CSV.
-      *
-      * @param acc Lista acumuladora que almacena las filas parseadas.
-      * @return    Lista final de filas parseadas.
-      */
-  def processLines(acc: List[List[Any]]): List[List[Any]] = {
-    if (lines.hasNext) {
-      val rowString = lines.next()
-      val row = rowString.split(",").toList
-
-      if (row.nonEmpty) {
-        val parsedRow = parseRow(row)
-        if (parsedRow.nonEmpty) {
-          processLines(acc :+ parsedRow)
-        } else {
-            // Skip invalid rows
-          processLines(acc)
-        }
-      } else {
-        // Skip empty rows
-        processLines(acc)
-      }
-    } else {
-      acc
-    }
-  }
-    processLines(List())
-  }
-
-  // Ejemplo de uso:
-  def run(pathFile: Path, select: Option[List[String]] = None, types: Option[List[String => Any]] = None): Unit = {
-    val source = Source.fromFile(pathFile.toFile)
-    val lines = source.getLines()
-    
-    val result = parseCsvRec(lines, select, types)
-
-    source.close()
-
-    println(result)
+    // Devolver solo las primeras 15 filas
+    parsedData.take(15)
   }
 }
