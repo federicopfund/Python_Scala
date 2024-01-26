@@ -20,6 +20,7 @@ object ProcesadorCamion {
     }
   }
 
+
   def totalPagado(precioCompra: List[Map[String, Any]]): Double = {
     precioCompra.map(s => s("cajones").asInstanceOf[Int] * s("precio").asInstanceOf[Double]).sum
   }
