@@ -1,9 +1,12 @@
 package plotter
 
+import breeze.stats.hist._
 import breeze.plot._
 import java.io.File
 import java.nio.file.{Files, Paths}
 import breeze.linalg._
+import simulacion.ProbabilidadGenerala._
+import breeze.linalg.DenseVector
 
 object plt {
     /**
@@ -28,13 +31,10 @@ object plt {
     
     // Refrescar la figura para mostrar el gráfico
     fig.refresh()
-    Save.Plotter(fig,"DiagramaTemp")
+    Save.Plotter(fig,"DiagramaHistogram")
   }
-}
 
-object TermometroPlotter {
-
-  def mostrarEstadisticas(temperaturas: breeze.linalg.DenseVector[Double]): Unit = {
+  def plottermo(temperaturas: breeze.linalg.DenseVector[Double]): Unit = {
     val N = temperaturas.length
     val minimo = temperaturas.min
     val maximo = temperaturas.max
@@ -59,7 +59,6 @@ object TermometroPlotter {
     Save.Plotter(fig,"DiagramaTemp")
   }
 }
-
 
 
 object Save {
