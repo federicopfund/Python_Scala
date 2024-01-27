@@ -2,7 +2,7 @@ package varios
 
 object AlbumFigus {
   
-  import plotter.figus.plot
+  import plotter.plt.plotfigus
 
   val figusTotal: Int = 670
   val figusPaquete: Int = 5
@@ -45,5 +45,5 @@ object AlbumFigus {
   val historiaFigusPegadas: Vector[Int] = calcularHistoriaFigusPegadas(figusTotal, figusPaquete)
 
   // Llamar a la función plot desde el Plotter
-  plot(0 until historiaFigusPegadas.length, historiaFigusPegadas)
+  plotfigus(0 until historiaFigusPegadas.length, historiaFigusPegadas)
 }
