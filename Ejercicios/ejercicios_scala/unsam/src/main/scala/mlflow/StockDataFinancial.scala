@@ -1,10 +1,12 @@
 package mlflow
 
+import org.apache.spark.ml.classification.MultilayerPerceptronClassifier
+import org.apache.spark.ml.evaluation.BinaryClassificationEvaluator
+import org.apache.spark.ml.feature.{VectorAssembler, StandardScaler}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.ml.Pipeline
-import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.regression.LinearRegression
 import org.apache.spark.ml.evaluation.RegressionEvaluator
-import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.{hour, minute, col}
 import contable.StockDataFinancial
 /**
@@ -65,40 +67,51 @@ object MlStockDataFinancial {
     * @param stockData DataFrame con los datos financieros.
     * @return DataFrame con predicciones del modelo.
     */
-  def trainAndPredict(stockData: DataFrame): DataFrame = {
-    // Ensamblar las características en un solo vector
+  def trainAndPredictMultilayerPerceptron(data: DataFrame): DataFrame = {
+    // Assemble features into a single vector
     val assembler = new VectorAssembler()
-      .setInputCols(Array("change", "open", "high", "low", "volume"))
-      .setOutputCol("features")
+        .setInputCols(Array("change", "open", "high", "low", "volume"))
+        .setOutputCol("features")
 
-    val assembledData = assembler.transform(stockData)
+    val assembledData = assembler.transform(data)
 
-    // Dividir los datos en conjuntos de entrenamiento y prueba
-    val Array(trainingData, testData) = assembledData.randomSplit(Array(0.8, 0.2), seed = 1234)
+    // Scale features using StandardScaler
+    val scaler = new StandardScaler()
+        .setInputCol("features")
+        .setOutputCol("scaledFeatures")
+        .setWithStd(true)
+        .setWithMean(true)
 
-    // Definir el modelo de la red neuronal
-    val layers = Array(5, 10, 5, 1) // Capas de entrada, oculta, oculta y salida
-    val mlp = new MultilayerPerceptronRegressor()
-      .setLayers(layers)
-      .setBlockSize(128)
-      .setMaxIter(100)
-      .setFeaturesCol("features")
-      .setLabelCol("price")
+    val scaledData = scaler.fit(assembledData).transform(assembledData)
 
-    // Entrenar el modelo
+    // Split data into training and testing sets
+    val Array(trainingData, testData) = scaledData.randomSplit(Array(0.8, 0.2), seed = 1234)
+
+    // Define the layers for the multilayer perceptron
+    val layers = Array(5, 10, 5, 2) // Input, 2 hidden layers with 10 and 5 neurons, and output
+
+    // Define the Multilayer Perceptron model
+    val mlp = new MultilayerPerceptronClassifier()
+        .setLayers(layers)
+        .setBlockSize(128)
+        .setMaxIter(100)
+        .setFeaturesCol("scaledFeatures")
+        .setLabelCol("label") // Assuming you have a "label" column for binary classification
+
+    // Train the Multilayer Perceptron model
     val mlpModel = mlp.fit(trainingData)
 
-    // Realizar predicciones en el conjunto de prueba
+    // Make predictions on the test data
     val predictions = mlpModel.transform(testData)
 
-    // Evaluar el rendimiento del modelo
-    val evaluator = new RegressionEvaluator()
-      .setLabelCol("price")
-      .setPredictionCol("prediction")
-      .setMetricName("rmse")
+    // Evaluate the model
+    val evaluator = new BinaryClassificationEvaluator()
+        .setLabelCol("label")
+        .setRawPredictionCol("rawPrediction")
+        .setMetricName("areaUnderROC")
 
-    val rmse = evaluator.evaluate(predictions)
-    println(s"Root Mean Squared Error (RMSE): $rmse")
+    val areaUnderROC = evaluator.evaluate(predictions)
+    println(s"Area under ROC: $areaUnderROC")
 
     predictions
   }
