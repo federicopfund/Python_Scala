@@ -69,4 +69,4 @@ if __name__ == '__main__':
             archivo = 'arbolado-publico-lineal-2017-2018.csv' 
     except FileNotFoundError:
         print(f'No se encuentra el archivo {sys.argv[1]}')
-    main(archivo)
+    main(sys.argv)
