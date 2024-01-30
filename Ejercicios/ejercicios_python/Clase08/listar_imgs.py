@@ -44,4 +44,4 @@ if __name__ == '__main__':
             ruta = '../Data/' # Si no, entro por default al asignado
     except FileNotFoundError:
         print(f'No se encuentra el archivo {sys.argv[1]}')
-    main(ruta)
+    main(sys.argv)
