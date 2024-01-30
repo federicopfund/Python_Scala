@@ -98,5 +98,5 @@ if __name__ == '__main__':
             archivo2 = 'OBS_Zarate_2013A.csv'
     except FileNotFoundError:
         print(f'No se encuentran archivos!')
-    main(archivo1, archivo2)
+    main(sys.argv, sys.argv)
 #%%
