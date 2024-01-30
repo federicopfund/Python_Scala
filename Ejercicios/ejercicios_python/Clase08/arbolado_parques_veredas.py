@@ -98,5 +98,5 @@ if __name__ == '__main__':
             archivo2 = 'arbolado-en-espacios-verdes.csv'
     except FileNotFoundError:
         print(f'No se encuentran los archivos bebe,problemas con la ruta!!')
-    main(archivo1, archivo2)
+    main(sys.argv[0], sys.argv[1])
 #%%
