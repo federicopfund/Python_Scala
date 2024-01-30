@@ -65,5 +65,5 @@ if __name__ == '__main__':
             archivo = 'OBS_SHN_SF-BA.csv' 
     except FileNotFoundError:
         print(f'No se encuentra el archivo {sys.argv[1]}')
-    main(archivo)
+    main(sys.argv)
 #%%
